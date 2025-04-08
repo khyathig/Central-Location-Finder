@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Find Your Central Location</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #d9afd9, #97d9e1);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 25px;
+      padding: 40px 30px;
+      backdrop-filter: blur(15px);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+      width: 90%;
+      max-width: 800px;
+      color: #fff;
+      animation: fadeIn 0.8s ease;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    h2 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 30px;
+    }
+
+    .location-group {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+      gap: 10px;
+    }
+
+    .location-group input {
+      flex: 1;
+      padding: 12px 15px;
+      border-radius: 12px;
+      border: none;
+      font-size: 1rem;
+      background-color: rgba(255, 255, 255, 0.3);
+      color: #000;
+    }
+
+    .location-group button {
+      background-color: #ff6b6b;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: background 0.3s ease;
+    }
+
+    .location-group button:hover {
+      background-color: #e63946;
+    }
+
+    .add-btn,
+    .submit-btn {
+      width: 100%;
+      padding: 14px;
+      font-size: 1.1rem;
+      margin-top: 15px;
+      border: none;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.3s ease;
+    }
+
+    .add-btn {
+      background-color: #38b000;
+      color: white;
+    }
+
+    .add-btn:hover {
+      background-color: #2d6a4f;
+      transform: scale(1.02);
+    }
+
+    .select-group {
+      margin: 25px 0;
+    }
+
+    label {
+      font-weight: 500;
+      margin-bottom: 8px;
+      display: block;
+      font-size: 1rem;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 1rem;
+      background-color: rgba(255, 255, 255, 0.3);
+      border: none;
+      color: #000;
+    }
+
+    .submit-btn {
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      color: white;
+    }
+
+    .submit-btn:hover {
+      background: linear-gradient(135deg, #4e148c, #1a5fff);
+      transform: scale(1.02);
+    }
+
+    /* Scrollbar for select */
+    select[multiple] {
+      height: 120px;
+      overflow-y: auto;
+    }
+
+    ::placeholder {
+      color: #555;
+    }
+
+    @media (max-width: 600px) {
+      h2 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>🌍 Plan Your Perfect Meet-up</h2>
+
+    <div id="locationFields">
+      <div class="location-group">
+        <input type="text" name="location[]" placeholder="Enter location (e.g., Times Square)">
+      </div>
+    </div>
+
+    <button class="add-btn" onclick="addLocation()">+ Add More Locations</button>
+
+    <div class="select-group">
+      <label for="placeType">Preferred Place Types (choose multiple):</label>
+      <select id="placeType" multiple>
+        <option value="cafe">Cafe</option>
+        <option value="restaurant">Restaurant</option>
+        <option value="park">Park</option>
+        <option value="library">Library</option>
+        <option value="museum">Museum</option>
+        <option value="mall">Shopping Mall</option>
+        <option value="gym">Gym</option>
+        <option value="cinema">Cinema</option>
+        <option value="theater">Theater</option>
+        <option value="school">School</option>
+      </select>
+    </div>
+
+    <div class="select-group">
+      <label for="centralPoint">Choose Central Point Type:</label>
+      <select id="centralPoint">
+        <option value="cafe">Cafe</option>
+        <option value="restaurant">Restaurant</option>
+        <option value="park">Park</option>
+        <option value="library">Library</option>
+        <option value="museum">Museum</option>
+        <option value="mall">Shopping Mall</option>
+        <option value="gym">Gym</option>
+        <option value="cinema">Cinema</option>
+        <option value="theater">Theater</option>
+        <option value="school">School</option>
+      </select>
+    </div>
+
+    <button class="submit-btn">🎯 Find Central Location</button>
+  </div>
+
+  <script>
+    function addLocation() {
+      const locationFields = document.getElementById('locationFields');
+      const newField = document.createElement('div');
+      newField.className = 'location-group';
+      newField.innerHTML = `
+        <input type="text" name="location[]" placeholder="Enter location">
+        <button onclick="this.parentNode.remove()">✖</button>
+      `;
+      locationFields.appendChild(newField);
+    }
+  </script>
+
+</body>
+</html>
