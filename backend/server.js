@@ -9,12 +9,18 @@ connectDB();
 
 const app = express();
 
+// Routes
+app.use('/api/auth', require('./routes/authRoutes'));
+const placeRoutes = require("./routes/placeRoutes");
+const locationRoutes = require("./routes/locationRoutes");
+
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
+app.use("/api/places", placeRoutes);
+app.use("/api/locations", locationRoutes);
 
-// Routes
-app.use('/api/auth', require('./routes/authRoutes'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
