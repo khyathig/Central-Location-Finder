@@ -1,12 +1,33 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from "../AuthContext";
 
 const Navbar = () => {
+    const { isLoggedIn, logout } = useAuth();
+    const navigate = useNavigate();
+
+    const handleLogout = () => {
+        logout();
+        navigate('/login');
+    };
+
     return (
         <nav style={styles.navbar}>
             <h2 style={styles.logo}>Central Location Finder</h2>
             <div>
-                <Link to="/signup" style={styles.link}>Signup</Link>
-                <Link to="/login" style={styles.link}>Login</Link>
+                {!isLoggedIn ? (
+                    <>
+                        <Link to="/signup" style={styles.link}>Signup</Link>
+                        <Link to="/login" style={styles.link}>Login</Link>
+                    </>
+                ) : (
+                    <>
+                        <Link to="/" style={styles.link}>Find Location</Link>
+                        <Link to="/events" style={styles.link}>Events</Link>
+                        <button onClick={handleLogout} style={{ ...styles.link, background: 'transparent', border: 'none', cursor: 'pointer' }}>
+                            Logout
+                        </button>
+                    </>
+                )}
             </div>
         </nav>
     );
@@ -17,7 +38,7 @@ const styles = {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        background: '#007bff',
+        background: '#6b21a8',
         padding: '10px 20px',
         color: 'white',
     },
