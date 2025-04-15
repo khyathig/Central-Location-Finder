@@ -18,7 +18,7 @@ export const AuthProvider = ({ children }) => {
     const login = (token) => {
         localStorage.setItem('token', token);
         const payload = JSON.parse(atob(token.split('.')[1]));
-        setUser({ id: payload.id, email: payload.email });
+        setUser({ id: payload.userId, email: payload.email });
     };
 
     const logout = () => {

@@ -30,7 +30,7 @@ const rsvpToEvent = async (req, res) => {
         console.log("🔐 Auth Header:", req.headers['authorization']);
         console.log("👤 Decoded User:", req.user);
 
-        const userId = req.user.id; // ✅ Securely extracted from token
+        const userId = req.user.userId; // ✅ Securely extracted from token
         const { eventId } = req.body;
 
         console.log("📨 RSVP attempt by user:", userId, "for event:", eventId);
