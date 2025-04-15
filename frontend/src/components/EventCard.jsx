@@ -1,7 +1,7 @@
 import { rsvpToEvent } from '../api/eventApi';
 import { useAuth } from '../AuthContext'; // use context to get user info
 
-const EventCard = ({ event }) => {
+const EventCard = ({ event, onRSVPSuccess }) => {
     const { user } = useAuth();
     const userId = user?.id;
 
@@ -16,7 +16,7 @@ const EventCard = ({ event }) => {
 
         try {
             await rsvpToEvent(event._id, userId);
-            window.location.reload(); // replace with state update later for smoother UX
+            onRSVPSuccess?.(event._id);
         } catch (err) {
             console.error("RSVP error:", err);
             alert("Could not RSVP. Try again.");
