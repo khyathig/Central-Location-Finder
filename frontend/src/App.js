@@ -10,6 +10,7 @@ import PrivateRoute from './components/PrivateRoute';
 function App() {
     return (
         <>
+            <div className="starry-background"></div>
             <Navbar />
             <div className="container mx-auto p-4">
                 <Routes>

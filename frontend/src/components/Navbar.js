@@ -11,46 +11,24 @@ const Navbar = () => {
     };
 
     return (
-        <nav style={styles.navbar}>
-            <h2 style={styles.logo}>Central Location Finder</h2>
-            <div>
+        <nav className="navbar">
+            <h2 className="navbar-logo">Central Location Finder</h2>
+            <div className="navbar-links">
                 {!isLoggedIn ? (
                     <>
-                        <Link to="/signup" style={styles.link}>Signup</Link>
-                        <Link to="/login" style={styles.link}>Login</Link>
+                        <Link to="/signup" className="navbar-link">Signup</Link>
+                        <Link to="/login" className="navbar-link">Login</Link>
                     </>
                 ) : (
                     <>
-                        <Link to="/" style={styles.link}>Find Location</Link>
-                        <Link to="/events" style={styles.link}>Events</Link>
-                        <button onClick={handleLogout} style={{ ...styles.link, background: 'transparent', border: 'none', cursor: 'pointer' }}>
-                            Logout
-                        </button>
+                        <Link to="/" className="navbar-link">Find Location</Link>
+                        <Link to="/events" className="navbar-link">Events</Link>
+                        <button onClick={handleLogout} className="navbar-link navbar-btn">Logout</button>
                     </>
                 )}
             </div>
         </nav>
     );
-};
-
-const styles = {
-    navbar: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        background: '#6b21a8',
-        padding: '10px 20px',
-        color: 'white',
-    },
-    logo: {
-        margin: 0,
-    },
-    link: {
-        marginLeft: '15px',
-        color: 'white',
-        textDecoration: 'none',
-        fontSize: '18px',
-    }
 };
 
 export default Navbar;
