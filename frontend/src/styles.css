@@ -4,7 +4,7 @@ body {
     margin: 0;
     padding: 0;
     background-color: #f8f9fa;
-    color: #333;
+    color: #f8f9fa;
 }
 
 /* Page Layout */
@@ -23,9 +23,12 @@ body {
 /* Event Form Section */
 .event-form-section {
     flex: 1;
+    align-self: flex-start;
     background: white;
     padding: 20px;
     border-radius: 10px;
+    height: auto;
+    min-height: auto;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
@@ -39,7 +42,7 @@ form input, form textarea {
     width: 100%;
     padding: 10px;
     margin: 10px 0;
-    border: 1px solid #ccc;
+    border: 1px solid #181818;
     border-radius: 5px;
     font-size: 16px;
 }
@@ -62,7 +65,7 @@ form button:hover {
 /* Event List Section */
 .event-list-section {
     flex: 2;
-    background: white;
+    background: rgb(255, 255, 255);
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -96,7 +99,7 @@ form button:hover {
 }
 
 .event-card p {
-    color: #e0e0e0;
+    color: #3f3f3f;
     margin: 5px 0;
 }
 
@@ -144,7 +147,7 @@ button.rsvped {
 form input, form textarea, form select {
     background: rgba(255, 255, 255, 0.1);
     border: none;
-    color: white;
+    color: rgb(125, 125, 125);
     font-size: 16px;
     border-radius: 8px;
     padding: 12px;
