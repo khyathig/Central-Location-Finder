@@ -35,4 +35,23 @@ export const rsvpToEvent = async (eventId) => {
     return await response.json();
 };
 
+export const unrsvpFromEvent = async (eventId) => {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(`${API_URL}/unrsvp`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ eventId }),
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to un-RSVP');
+    }
+
+    return await response.json();
+};
 

@@ -66,6 +66,41 @@ const rsvpToEvent = async (req, res) => {
     }
 };
 
+const unrsvpFromEvent = async (req, res) => {
+    try {
+        const userId = req.user.userId;
+        const { eventId } = req.body;
 
-module.exports = { createEvent, getEvents, rsvpToEvent };
+        const event = await Event.findById(eventId);
+        if (!event) return res.status(404).json({ error: "Event not found" });
+
+        const eventDate = new Date(event.date);
+        const now = new Date();
+        const timeDiff = eventDate.getTime() - now.getTime();
+        const oneDayInMs = 24 * 60 * 60 * 1000;
+
+        if (timeDiff < oneDayInMs) {
+            return res.status(400).json({ error: "Cannot un-RSVP within 1 day of the event" });
+        }
+
+        // Remove RSVP from RSVP collection
+        await RSVP.findOneAndDelete({ userId, eventId });
+
+        // Remove user from attendees array
+        event.attendees = event.attendees.filter(id => id.toString() !== userId);
+        await event.save();
+
+        res.status(200).json({ message: "Un-RSVP successful", event });
+    } catch (error) {
+        console.error("🔥 Un-RSVP Error:", error);
+        res.status(500).json({ error: error.message });
+    }
+};
+
+module.exports = {
+    createEvent,
+    getEvents,
+    rsvpToEvent,
+    unrsvpFromEvent, // ✅ Export this
+};
 
