@@ -13,7 +13,8 @@ const EventList = () => {
         const fetchEvents = async () => {
             try {
                 const data = await getEvents();
-                setEvents(data);
+                const upcomingEvents = data.filter(event => new Date(event.date) >= new Date());
+                setEvents(upcomingEvents);
             } catch (err) {
                 console.error('Failed to fetch events:', err);
                 setError('Unable to load events. Please try again later.');
