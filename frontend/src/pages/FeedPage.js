@@ -68,6 +68,10 @@ const FeedPage = () => {
               <option value="library">Library</option>
               <option value="bar">Bar</option>
               <option value="cinema">Cinema</option>
+              <option value="fast_food">Fast Food</option>
+              <option value="pub">Pub</option>
+              <option value="pharmacy">Pharmacy</option>
+              <option value="bank">Bank</option>
             </select>
           </div>
 
