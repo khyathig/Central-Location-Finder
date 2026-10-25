@@ -2,7 +2,12 @@ const axios = require("axios");
 
 const geocode = async (address) => {
   const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json`;
-  const res = await axios.get(url);
+  const res = await axios.get(url, {
+      headers: {
+        "User-Agent": "CentralLocationFinder/1.0 (khyathigutta22@gmail.com)",
+        "Accept-Language": "en"
+      }
+    });
   const data = res.data;
   if (!data.length) throw new Error("No result for address");
   return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };

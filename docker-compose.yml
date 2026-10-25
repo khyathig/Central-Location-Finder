@@ -1,0 +1,40 @@
+services:
+  mongo:
+    image: mongo:7
+    restart: unless-stopped
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - clf_network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      MONGO_URI: mongodb://mongo:27017/CLF
+      JWT_SECRET: ${JWT_SECRET:-change-this-in-production}
+      PORT: 5000
+    depends_on:
+      - mongo
+    networks:
+      - clf_network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - clf_network
+
+networks:
+  clf_network:
+
+volumes:
+  mongo_data:

@@ -20,14 +20,14 @@ const FeedPage = () => {
 
   const findPlaces = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/api/locations/central", {
+      const response = await axios.post("/api/locations/central", {
         addresses: locations.map((loc) => loc.address),
       });
 
       const { central } = response.data;
       setCentralPoint(central);
 
-      const placesResponse = await axios.post("http://localhost:5000/api/places/nearby-places", {
+      const placesResponse = await axios.post("/api/places/nearby-places", {
         lat: central.lat,
         lng: central.lng,
         type: category,

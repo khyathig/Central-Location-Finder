@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:5000/api/events';
+const API_URL = '/api/events';
 export const createEvent = async (eventData) => {
     const res = await fetch(`${API_URL}/create`, {
         method: 'POST',
