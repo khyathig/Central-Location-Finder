@@ -8,11 +8,13 @@ pipeline {
     }
 
     environment {
+        PATH = "C:\\Users\\khyat\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin;${env.PATH}"
+    
         DOCKERHUB_USER = 'khyathig'
-
+    
         BACKEND_IMAGE = 'khyathig/clf-backend'
         FRONTEND_IMAGE = 'khyathig/clf-frontend'
-
+    
         BACKEND_DIR = 'backend'
         FRONTEND_DIR = 'frontend'
     }
@@ -61,6 +63,13 @@ pipeline {
                 dir(env.FRONTEND_DIR) {
                     sh 'npm run build'
                 }
+            }
+        }
+
+        stage('Verify Docker') {
+            steps {
+                sh 'docker --version'
+                sh 'docker info'
             }
         }
 
