@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clf-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: clf-backend
+  template:
+    metadata:
+      labels:
+        app: clf-backend
+    spec:
+      containers:
+        - name: backend
+          image: central-location-finder-backend:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+          env:
+            - name: MONGO_URI
+              value: "mongodb://clf-mongo:27017/CLF"
+            - name: PORT
+              value: "5000"
+            - name: JWT_SECRET
+              value: "change-this-in-production"

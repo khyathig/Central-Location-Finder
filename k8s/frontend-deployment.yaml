@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clf-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: clf-frontend
+  template:
+    metadata:
+      labels:
+        app: clf-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: central-location-finder-frontend:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 80
