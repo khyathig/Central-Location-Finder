@@ -8,11 +8,13 @@ pipeline {
     }
 
     environment {
-        BACKEND_IMAGE  = "clf-backend:${BUILD_NUMBER}"
-        FRONTEND_IMAGE = "clf-frontend:${BUILD_NUMBER}"
-        BACKEND_DIR    = 'backend'
-        FRONTEND_DIR   = 'frontend'
-        DOCKER_EXE     = 'C:\\Users\\khyat\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe'
+        DOCKERHUB_USER = 'khyathig'
+
+        BACKEND_IMAGE = 'khyathig/clf-backend'
+        FRONTEND_IMAGE = 'khyathig/clf-frontend'
+
+        BACKEND_DIR = 'backend'
+        FRONTEND_DIR = 'frontend'
     }
 
     stages {
@@ -64,29 +66,78 @@ pipeline {
 
         stage('Build Docker Images') {
             steps {
-                bat '"%DOCKER_EXE%" --version'
-                bat '"%DOCKER_EXE%" info'
+                sh "docker build --pull -t ${BACKEND_IMAGE}:${BUILD_NUMBER} ./${BACKEND_DIR}"
+                sh "docker build --pull -t ${FRONTEND_IMAGE}:${BUILD_NUMBER} ./${FRONTEND_DIR}"
 
-                bat '"%DOCKER_EXE%" build --pull -t %BACKEND_IMAGE% .\\backend'
-                bat '"%DOCKER_EXE%" build --pull -t %FRONTEND_IMAGE% .\\frontend'
+                sh "docker tag ${BACKEND_IMAGE}:${BUILD_NUMBER} ${BACKEND_IMAGE}:latest"
+                sh "docker tag ${FRONTEND_IMAGE}:${BUILD_NUMBER} ${FRONTEND_IMAGE}:latest"
+            }
+        }
 
-                bat '"%DOCKER_EXE%" tag %BACKEND_IMAGE% clf-backend:latest'
-                bat '"%DOCKER_EXE%" tag %FRONTEND_IMAGE% clf-frontend:latest'
+        stage('Login to Docker Hub') {
+            steps {
+                withCredentials([
+                    usernamePassword(
+                        credentialsId: 'dockerhub-credentials',
+                        usernameVariable: 'DOCKER_USER',
+                        passwordVariable: 'DOCKER_PASSWORD'
+                    )
+                ]) {
+                    sh '''
+                        printf '%s' "$DOCKER_PASSWORD" |
+                            docker login --username "$DOCKER_USER" --password-stdin
+                    '''
+                }
+            }
+        }
+
+        stage('Push Docker Images') {
+            steps {
+                sh "docker push ${BACKEND_IMAGE}:${BUILD_NUMBER}"
+                sh "docker push ${BACKEND_IMAGE}:latest"
+
+                sh "docker push ${FRONTEND_IMAGE}:${BUILD_NUMBER}"
+                sh "docker push ${FRONTEND_IMAGE}:latest"
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                sh 'kubectl config current-context'
+                sh 'kubectl get nodes'
+        
+                // Apply the Kubernetes manifests
+                sh 'kubectl apply -f k8s/'
+        
+                // Update the images using the actual container names
+                sh "kubectl set image deployment/clf-backend backend=${BACKEND_IMAGE}:${BUILD_NUMBER}"
+                sh "kubectl set image deployment/clf-frontend frontend=${FRONTEND_IMAGE}:${BUILD_NUMBER}"
+        
+                // Wait for deployments to become ready
+                sh 'kubectl rollout status deployment/clf-mongo --timeout=180s'
+                sh 'kubectl rollout status deployment/clf-backend --timeout=180s'
+                sh 'kubectl rollout status deployment/clf-frontend --timeout=180s'
+        
+                // Verify the deployment
+                sh 'kubectl get deployments'
+                sh 'kubectl get pods'
+                sh 'kubectl get services'
             }
         }
     }
 
     post {
         success {
-            echo "Built ${BACKEND_IMAGE} and ${FRONTEND_IMAGE} successfully."
+            echo "Successfully built and pushed ${BACKEND_IMAGE}:${BUILD_NUMBER} and ${FRONTEND_IMAGE}:${BUILD_NUMBER}"
+            echo 'Kubernetes deployment completed successfully.'
         }
 
         failure {
-            echo 'The pipeline failed. Review the console output for the failing stage.'
+            echo 'Pipeline failed. Review the Jenkins Console Output for the failing stage.'
         }
 
         always {
-            echo 'Central Location Finder CI pipeline execution completed.'
+            echo 'Central Location Finder pipeline execution finished.'
         }
     }
 }
