@@ -9,17 +9,17 @@ pipeline {
 
     environment {
         PATH = "C:\\Users\\khyat\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin;${env.PATH}"
-    
+
         DOCKERHUB_USER = 'khyathig'
-    
         BACKEND_IMAGE = 'khyathig/clf-backend'
         FRONTEND_IMAGE = 'khyathig/clf-frontend'
-    
+
         BACKEND_DIR = 'backend'
         FRONTEND_DIR = 'frontend'
     }
 
     stages {
+
         stage('Checkout') {
             steps {
                 checkout scm
@@ -73,16 +73,6 @@ pipeline {
             }
         }
 
-        stage('Build Docker Images') {
-            steps {
-                sh "docker build --pull -t ${BACKEND_IMAGE}:${BUILD_NUMBER} ./${BACKEND_DIR}"
-                sh "docker build --pull -t ${FRONTEND_IMAGE}:${BUILD_NUMBER} ./${FRONTEND_DIR}"
-
-                sh "docker tag ${BACKEND_IMAGE}:${BUILD_NUMBER} ${BACKEND_IMAGE}:latest"
-                sh "docker tag ${FRONTEND_IMAGE}:${BUILD_NUMBER} ${FRONTEND_IMAGE}:latest"
-            }
-        }
-
         stage('Login to Docker Hub') {
             steps {
                 withCredentials([
@@ -94,18 +84,34 @@ pipeline {
                 ]) {
                     sh '''
                         printf '%s' "$DOCKER_PASSWORD" |
-                            docker login --username "$DOCKER_USER" --password-stdin
+                            docker login \
+                                --username "$DOCKER_USER" \
+                                --password-stdin
                     '''
                 }
+            }
+        }
+
+        stage('Build Docker Images') {
+            steps {
+                sh "docker build --pull -t ${BACKEND_IMAGE}:${BUILD_NUMBER} ./${BACKEND_DIR}"
+
+                sh "docker build --pull -t ${FRONTEND_IMAGE}:${BUILD_NUMBER} ./${FRONTEND_DIR}"
+
+                sh "docker tag ${BACKEND_IMAGE}:${BUILD_NUMBER} ${BACKEND_IMAGE}:latest"
+
+                sh "docker tag ${FRONTEND_IMAGE}:${BUILD_NUMBER} ${FRONTEND_IMAGE}:latest"
             }
         }
 
         stage('Push Docker Images') {
             steps {
                 sh "docker push ${BACKEND_IMAGE}:${BUILD_NUMBER}"
+
                 sh "docker push ${BACKEND_IMAGE}:latest"
 
                 sh "docker push ${FRONTEND_IMAGE}:${BUILD_NUMBER}"
+
                 sh "docker push ${FRONTEND_IMAGE}:latest"
             }
         }
@@ -113,23 +119,25 @@ pipeline {
         stage('Deploy to Kubernetes') {
             steps {
                 sh 'kubectl config current-context'
+
                 sh 'kubectl get nodes'
-        
-                // Apply the Kubernetes manifests
+
                 sh 'kubectl apply -f k8s/'
-        
-                // Update the images using the actual container names
+
                 sh "kubectl set image deployment/clf-backend backend=${BACKEND_IMAGE}:${BUILD_NUMBER}"
+
                 sh "kubectl set image deployment/clf-frontend frontend=${FRONTEND_IMAGE}:${BUILD_NUMBER}"
-        
-                // Wait for deployments to become ready
+
                 sh 'kubectl rollout status deployment/clf-mongo --timeout=180s'
+
                 sh 'kubectl rollout status deployment/clf-backend --timeout=180s'
+
                 sh 'kubectl rollout status deployment/clf-frontend --timeout=180s'
-        
-                // Verify the deployment
+
                 sh 'kubectl get deployments'
+
                 sh 'kubectl get pods'
+
                 sh 'kubectl get services'
             }
         }
@@ -139,10 +147,11 @@ pipeline {
         success {
             echo "Successfully built and pushed ${BACKEND_IMAGE}:${BUILD_NUMBER} and ${FRONTEND_IMAGE}:${BUILD_NUMBER}"
             echo 'Kubernetes deployment completed successfully.'
+            echo 'Application URL: http://localhost:30080'
         }
 
         failure {
-            echo 'Pipeline failed. Review the Jenkins Console Output for the failing stage.'
+            echo 'Pipeline failed. Review the Console Output for the first failing stage.'
         }
 
         always {
